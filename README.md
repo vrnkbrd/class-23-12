@@ -265,3 +265,557 @@ public class Greed {
   }
   
 }
+
+
+Task 4 kyu
+https://www.codewars.com/kata/5d7bb3eda58b36000fcc0bbb/java
+my solution
+import java.math.BigInteger;
+
+public class GeneralizedFibonacci {
+  public static BigInteger[][] Multiply(BigInteger[][] a, BigInteger[][] b, byte n){
+    BigInteger[][] c = new BigInteger[n][n];
+    for (int i=0;i<n;i++){
+      for (int j=0;j<n;j++){
+        c[i][j] = BigInteger.ZERO;
+        for (int k=0;k<n;k++){
+          c[i][j] = c[i][j].add(a[i][k].multiply(b[k][j]));
+        }
+      }
+    }
+    return c;
+  }
+
+  public static BigInteger Get (byte[] a, byte[] b, long power)
+  {
+    byte l = (byte) a.length;
+    BigInteger z = BigInteger.ZERO;
+    BigInteger o = BigInteger.ONE;
+    BigInteger[][] curr = new BigInteger[l][l];
+    BigInteger[][] mult = new BigInteger[l][l];
+    BigInteger result = BigInteger.ZERO;
+    
+    for (int i=0;i<l;i++){
+      for (int j=0;j<l;j++){
+        curr[i][j] = z;
+        mult[i][j] = z;
+      }
+    }
+    
+    curr[0][0] = o;
+    mult[l-1][l-1] = BigInteger.valueOf(b[0]);
+    for (int i=0;i<l-1;i++){
+      curr[i+1][i+1] = o;
+      mult[i][i+1] = o;
+      mult[l-1][i] = BigInteger.valueOf(b[l-1-i]);
+    }
+    
+    long t = power - l + 1;
+    
+    while (t > 0){
+      if ((t % 2) == 1){
+        curr = Multiply(curr, mult, l);
+      }
+      t = t >> 1;
+      mult = Multiply(mult, mult, l);
+    }
+    
+    for (int u=0;u<l;u++){
+      result = result.add( BigInteger.valueOf(a[u]).multiply(curr[l-1][u]) );
+    }
+    
+    return result;
+  }
+}
+fav 
+import java.math.BigInteger;
+import java.util.*;
+
+public class GeneralizedFibonacci {
+  
+    public static BigInteger Get(byte[] init, byte[] coef, long n) {
+        switch (init.length) {
+            case 2: return get2(init, coef, (int)n);
+            case 3: return get3(init, coef, (int)n);
+            case 4: return get4(init, coef, (int)n);
+            case 5: return get5(init, coef, (int)n);
+            default: return null;
+        }
+    }
+    
+      public static BigInteger get5(byte[] init, byte[] coef, int n) {
+        if (n < init.length) {
+            return BigInteger.valueOf(init[n]);
+        }
+
+        BigInteger g4 = BigInteger.valueOf(init[4]);
+        BigInteger g3 = BigInteger.valueOf(init[3]);
+        BigInteger g2 = BigInteger.valueOf(init[2]);
+        BigInteger g1 = BigInteger.valueOf(init[1]);
+        BigInteger g0 = BigInteger.valueOf(init[0]);
+        BigInteger zo = BigInteger.ZERO;
+        BigInteger[][] base = new BigInteger[][]{{g4, g3, g2, g1, g0},
+                                                 {g3, g2, g1, g0, zo},
+                                                 {g2, g1, g0, zo, zo},
+                                                 {g1, g0, zo, zo, zo}, 
+                                                 {g0, zo, zo, zo, zo}};
+
+        BigInteger c4 = BigInteger.valueOf(coef[0]);
+        BigInteger c3 = BigInteger.valueOf(coef[1]);
+        BigInteger c2 = BigInteger.valueOf(coef[2]);
+        BigInteger c1 = BigInteger.valueOf(coef[3]);
+        BigInteger c0 = BigInteger.valueOf(coef[4]);
+        BigInteger on = BigInteger.ONE;
+        BigInteger[][] ones = new BigInteger[][]{{c4, on, zo, zo, zo},
+                                                 {c3, zo, on, zo, zo},
+                                                 {c2, zo, zo, on, zo},
+                                                 {c1, zo, zo, zo, on}, 
+                                                 {c0, zo, zo, zo, zo}};
+
+        Map<Integer, BigInteger[][]> map = new HashMap<>();
+        List<Integer> line = getLine(n - 4);
+        int cap = line.get(line.size() - 1);
+        int ind = 1;
+        map.put(1, ones);
+        while (true) {
+            ind *= 2;
+            if (ind > cap) {
+                break;
+            }
+            ones = mult(ones, ones);
+            if (line.contains(ind)) {
+                map.put(ind, ones);
+            }
+        }
+        for (int i = 0; i < line.size(); i++) {
+            base = mult(base, map.get(line.get(i)));
+        }
+        return base[0][0];
+    }
+
+    public static BigInteger get4(byte[] init, byte[] coef, int n) {
+        if (n < init.length) {
+            return BigInteger.valueOf(init[n]);
+        }
+
+        BigInteger g3 = BigInteger.valueOf(init[3]);
+        BigInteger g2 = BigInteger.valueOf(init[2]);
+        BigInteger g1 = BigInteger.valueOf(init[1]);
+        BigInteger g0 = BigInteger.valueOf(init[0]);
+        BigInteger zo = BigInteger.ZERO;
+        BigInteger[][] base = new BigInteger[][]{{g3, g2, g1, g0},
+                                                 {g2, g1, g0, zo},
+                                                 {g1, g0, zo, zo},
+                                                 {g0, zo, zo, zo}};
+
+        BigInteger c3 = BigInteger.valueOf(coef[0]);
+        BigInteger c2 = BigInteger.valueOf(coef[1]);
+        BigInteger c1 = BigInteger.valueOf(coef[2]);
+        BigInteger c0 = BigInteger.valueOf(coef[3]);
+        BigInteger on = BigInteger.ONE;
+        BigInteger[][] ones = new BigInteger[][]{{c3, on, zo, zo},
+                                                 {c2, zo, on, zo},
+                                                 {c1, zo, zo, on},
+                                                 {c0, zo, zo, zo}};
+
+        Map<Integer, BigInteger[][]> map = new HashMap<>();
+        List<Integer> line = getLine(n - 3);
+        int cap = line.get(line.size() - 1);
+        int ind = 1;
+        map.put(1, ones);
+        while (true) {
+            ind *= 2;
+            if (ind > cap) {
+                break;
+            }
+            ones = mult(ones, ones);
+            if (line.contains(ind)) {
+                map.put(ind, ones);
+            }
+        }
+        for (int i = 0; i < line.size(); i++) {
+            base = mult(base, map.get(line.get(i)));
+        }
+        return base[0][0];
+    }
+  
+    public static BigInteger get3(byte[] init, byte[] coef, int n) {
+        if (n < init.length) {
+            return BigInteger.valueOf(init[n]);
+        }
+        
+        BigInteger g2 = BigInteger.valueOf(init[2]);
+        BigInteger g1 = BigInteger.valueOf(init[1]);
+        BigInteger g0 = BigInteger.valueOf(init[0]);
+        BigInteger zo = BigInteger.ZERO;
+        BigInteger[][] base = new BigInteger[][]{{g2, g1, g0},
+                                                 {g1, g0, zo}, 
+                                                 {g0, zo, zo}};
+
+        BigInteger c2 = BigInteger.valueOf(coef[0]);
+        BigInteger c1 = BigInteger.valueOf(coef[1]);
+        BigInteger c0 = BigInteger.valueOf(coef[2]);
+        BigInteger on = BigInteger.ONE;
+        BigInteger[][] ones = new BigInteger[][]{{c2, on, zo},
+                                                 {c1, zo, on}, 
+                                                 {c0, zo, zo}};
+
+        Map<Integer, BigInteger[][]> map = new HashMap<>();
+        List<Integer> line = getLine(n - 2);
+        int cap = line.get(line.size() - 1);
+        int ind = 1;
+        map.put(1, ones);
+        while (true) {
+            ind *= 2;
+            if (ind > cap) {
+                break;
+            }
+            ones = mult(ones, ones);
+            if (line.contains(ind)) {
+                map.put(ind, ones);
+            }
+        }
+        for (int i = 0; i < line.size(); i++) {
+            base = mult(base, map.get(line.get(i)));
+        }
+        return base[0][0];
+    }
+
+    public static BigInteger get2(byte[] init, byte[] coef, int n) {
+        if (n < init.length) {
+            return BigInteger.valueOf(init[n]);
+        }
+
+        BigInteger g1 = BigInteger.valueOf(init[1]);
+        BigInteger g0 = BigInteger.valueOf(init[0]);
+        BigInteger zo = BigInteger.ZERO;
+        BigInteger[][] base = new BigInteger[][]{{g1, g0},
+                                                 {g0, zo}};
+
+        BigInteger c1 = BigInteger.valueOf(coef[0]);
+        BigInteger c0 = BigInteger.valueOf(coef[1]);
+        BigInteger on = BigInteger.ONE;
+        BigInteger[][] ones = new BigInteger[][]{{c1, on},
+                                                 {c0, zo}};
+
+        Map<Integer, BigInteger[][]> map = new HashMap<>();
+        List<Integer> line = getLine(n - 1);
+        int cap = line.get(line.size() - 1);
+        int ind = 1;
+        map.put(1, ones);
+        while (true) {
+            ind *= 2;
+            if (ind > cap) {
+                break;
+            }
+            ones = mult(ones, ones);
+            if (line.contains(ind)) {
+                map.put(ind, ones);
+            }
+        }
+        for (int i = 0; i < line.size(); i++) {
+            base = mult(base, map.get(line.get(i)));
+        }
+        return base[0][0];
+    }
+
+    public static BigInteger[][] mult(BigInteger[][] a, BigInteger[][] b) {
+        BigInteger[][] result = new BigInteger[a.length][a.length];
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a.length; j++) {
+                BigInteger next = BigInteger.ZERO;
+                for (int k = 0; k < a.length; k++) {
+                    next = next.add(a[i][k].multiply(b[k][j]));
+                }
+                result[i][j] = next;
+            }
+        }
+        return result;
+    }
+
+    public static List<Integer> getLine(int n) {
+        List<Integer> result = new ArrayList<>();
+        while (n > 0) {
+            int i = 1;
+            while (i <= n && n % i == 0) {
+                i *= 2;
+            }
+            i /= 2;
+            result.add(i);
+            n -= i;
+        }
+        return result;
+    }
+
+    public static void printMatrix(BigInteger[][] matrix) {
+        for (BigInteger[] line : matrix) {
+            System.out.println(Arrays.toString(line));
+        }
+        System.out.println();
+    }
+}
+
+task 4 kyu 
+https://www.codewars.com/kata/5286a298f8fc1b7667000c1c/javascript
+my sol
+function DocumentParser(Reader)
+{
+  this.reader = Reader;
+  this.reset();
+}
+
+DocumentParser.prototype.reset = function()
+{
+  this.wordCount = 0;
+  this.charCount = 0;
+  this.lineCount = 0;
+};
+
+DocumentParser.prototype.parse = function()
+{
+  var text = '';
+  
+  do {
+    frag = this.reader.getChunk();
+    text += frag;
+    
+    if( text.indexOf( '\n' ) != -1 || frag == '' ) {
+      var parts = text.split( '\n' );
+
+      text = (parts.length > 1) ? parts.splice( -1, 1 ) : '';
+        
+      var self = this;
+      
+      parts.forEach( function( p ) {
+        self.charCount += p.length
+        self.lineCount += self.charCount ? 1 : 0;
+        p = p.trim();
+        i = 0;
+        while( i < p.length-1 ) {
+          if( p.charAt( i ) == ' ' && p.charAt( i+1 ) == ' ' )
+            p = p.slice( 0, i ) + p.slice( i+2 );
+          else
+            ++i;
+        }
+        
+        self.wordCount += (self.charCount && p != '') ? p.split( ' ' ).length : 0;
+      });
+    }
+  }
+  while( frag != '' );
+};
+
+fav sol
+function DocumentParser(Reader)
+{
+  this.reader = Reader;
+  this.reset();
+}
+
+DocumentParser.prototype.reset = function()
+{
+  this.wordCount = 0;
+  this.charCount = 0;
+  this.lineCount = 0;
+};
+
+DocumentParser.prototype.parse = function()
+{
+  this.reset();
+  var prevChar = ' ';
+  var chunk = this.reader.getChunk();
+
+  while (chunk !== '') {
+
+    for (var i = 0; i < chunk.length; i++) {
+      if (chunk[i] === '\n') {
+        this.lineCount++;
+        prevChar = ' ';
+      } else {
+        this.charCount++;
+        if (this.lineCount === 0) this.lineCount = 1;
+        if (chunk[i] !== ' ' && prevChar === ' ') {
+          this.wordCount++;
+        }
+        prevChar = chunk[i];
+      }
+    }
+    chunk = this.reader.getChunk();
+  }
+};
+
+task 4 kyu
+https://www.codewars.com/kata/55b7bb74a0256d4467000070/java
+public class ProperFractions {
+  public static long properFractions(long n) {
+       double res = n;
+    
+    if(n == 1){
+      return 0;
+    }
+    
+    for(long e=2; e*e<= n; e++) {
+      if(n%e == 0) {
+        while(n%e == 0){
+          n /= e;
+        }
+        
+        res *= (1.0 - (1.0 / (e*1.0) ));
+      }
+    }
+  
+    if(n > 1){
+      res *= (1.0 - (1.0 / (n*1.0) ));
+    }
+    
+    return (long)res;
+  }
+}
+fav
+public class ProperFractions {
+  public static long properFractions(long n) {
+    if (n==1) return 0;
+    long r=n;
+    for(long d=2;d*d<=n;d++)
+      if(n%d<1){
+        while(n%d<1)
+          n/=d;
+        r-=r/d;
+      }
+    if(n>1) r-=r/n;
+    return r;
+  }
+}
+
+task 5 kyu 
+https://www.codewars.com/kata/52685f7382004e774f0001f7/java
+my sol
+public class HumanReadableTime {
+  public static String makeReadable(int seconds) {
+    int hours = (seconds/60)/60;
+    int mins = (seconds/60)%60;
+    int secs = (seconds%60)%60;
+    StringBuffer time = new StringBuffer( hours +":" + mins+":" + secs);
+    if(hours <10)
+      time.insert(0,'0');
+      if (mins<10)
+      time.insert(3,'0');
+      if (secs<10)
+      time.insert(6,'0');
+    return time.toString();
+  }
+}
+fav sol
+public class HumanReadableTime {
+  public static String makeReadable(int seconds) {
+    return String.format("%02d:%02d:%02d", seconds / 3600, (seconds / 60) % 60, seconds % 60);
+  }
+}
+
+task 5 kyu
+https://www.codewars.com/kata/54521e9ec8e60bc4de000d6c
+my sol
+public class Max {
+  public static int sequence(int[] arr) {
+   int m = 0, a = 0, s = 0;
+    for(int f : arr) {
+      s += f;
+      m = Math.min(s, m);
+      a = Math.max(a, s - m);
+    }
+    return a;
+  }
+}
+fav sol
+public class Max {
+  public static int sequence(int[] arr) {
+
+    int sum = 0;
+    int max = 0;
+
+    for(int a : arr) {
+      sum += a;
+      max = Math.max(max, sum);
+      sum = Math.max(sum, 0);
+    }
+
+    return max;
+  }
+}
+
+task 5 kyu 
+https://www.codewars.com/kata/5c230f017f74a2e1c300004f
+my sol
+public class Dinglemouse {
+
+    private final static char wall = '#';
+    private final static char POTUS = 'X';
+    private final static char elve = 'o';
+    private final static char checked = '*';
+    private static char[][] white_house;
+    private static boolean is_all_alone;
+
+    public static boolean allAlone(char[][] house) {
+        white_house = house;
+        is_all_alone = true;
+        loops:
+        for (int h = 0; h < house.length; ++h)
+            for (int w = 0; w < house[0].length; ++w)
+                if (house[h][w] == 'X') {
+                    check(h, w);
+                    break loops;
+                }
+        return is_all_alone;
+    }
+
+    private static void check(int h, int w) {
+        char current = white_house[h][w];
+        if (current == wall || current == checked)
+            return;
+        if (current == elve) {
+            is_all_alone = false;
+            return;
+        }
+        white_house[h][w] = checked;
+        check(h - 1, w);
+        check(h + 1, w);
+        check(h, w - 1);
+        check(h, w + 1);
+    }
+
+}
+fav sol 
+public class Dinglemouse {
+
+  public static boolean allAlone(char[][] house) {
+    for(int y = 0; y < house.length; y++)
+      for(int x = 0; x < house[0].length; x++)
+        if(house[y][x] == 'X')
+          if(find(house, x, y))
+            return false;
+    
+    return true;
+  }
+  
+  public static boolean find(char[][] house, int x, int y) {
+    if(y < 0 || y >= house.length)
+      return false;//Out of bounds
+    
+    if(x < 0 || x >= house[0].length)
+      return false;//Out of bounds
+    
+    if(house[y][x] == 'o')
+      return true;//We found an elf!
+    
+    if(house[y][x] == '#' || house[y][x] == '-')
+      return false;//We don't want to search walls or places we have already seen
+    
+    house[y][x] = '-';//Change so we won't visit again
+    if(find(house, x + 1, y) || find(house, x - 1, y))
+      return true;//We found an elf left/right of us
+    
+    return find(house, x, y + 1) || find(house, x, y - 1);//We found al elf above/below us
+  }
+
+}
+
