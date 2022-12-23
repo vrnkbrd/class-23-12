@@ -316,229 +316,53 @@ public class GeneralizedFibonacci {
 ### Fav solution
 ```Java
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Arrays;
 
 public class GeneralizedFibonacci {
-  
-    public static BigInteger Get(byte[] init, byte[] coef, long n) {
-        switch (init.length) {
-            case 2: return get2(init, coef, (int)n);
-            case 3: return get3(init, coef, (int)n);
-            case 4: return get4(init, coef, (int)n);
-            case 5: return get5(init, coef, (int)n);
-            default: return null;
-        }
-    }
-    
-      public static BigInteger get5(byte[] init, byte[] coef, int n) {
-        if (n < init.length) {
-            return BigInteger.valueOf(init[n]);
-        }
-
-        BigInteger g4 = BigInteger.valueOf(init[4]);
-        BigInteger g3 = BigInteger.valueOf(init[3]);
-        BigInteger g2 = BigInteger.valueOf(init[2]);
-        BigInteger g1 = BigInteger.valueOf(init[1]);
-        BigInteger g0 = BigInteger.valueOf(init[0]);
-        BigInteger zo = BigInteger.ZERO;
-        BigInteger[][] base = new BigInteger[][]{{g4, g3, g2, g1, g0},
-                                                 {g3, g2, g1, g0, zo},
-                                                 {g2, g1, g0, zo, zo},
-                                                 {g1, g0, zo, zo, zo}, 
-                                                 {g0, zo, zo, zo, zo}};
-
-        BigInteger c4 = BigInteger.valueOf(coef[0]);
-        BigInteger c3 = BigInteger.valueOf(coef[1]);
-        BigInteger c2 = BigInteger.valueOf(coef[2]);
-        BigInteger c1 = BigInteger.valueOf(coef[3]);
-        BigInteger c0 = BigInteger.valueOf(coef[4]);
-        BigInteger on = BigInteger.ONE;
-        BigInteger[][] ones = new BigInteger[][]{{c4, on, zo, zo, zo},
-                                                 {c3, zo, on, zo, zo},
-                                                 {c2, zo, zo, on, zo},
-                                                 {c1, zo, zo, zo, on}, 
-                                                 {c0, zo, zo, zo, zo}};
-
-        Map<Integer, BigInteger[][]> map = new HashMap<>();
-        List<Integer> line = getLine(n - 4);
-        int cap = line.get(line.size() - 1);
-        int ind = 1;
-        map.put(1, ones);
-        while (true) {
-            ind *= 2;
-            if (ind > cap) {
-                break;
-            }
-            ones = mult(ones, ones);
-            if (line.contains(ind)) {
-                map.put(ind, ones);
-            }
-        }
-        for (int i = 0; i < line.size(); i++) {
-            base = mult(base, map.get(line.get(i)));
-        }
-        return base[0][0];
-    }
-
-    public static BigInteger get4(byte[] init, byte[] coef, int n) {
-        if (n < init.length) {
-            return BigInteger.valueOf(init[n]);
-        }
-
-        BigInteger g3 = BigInteger.valueOf(init[3]);
-        BigInteger g2 = BigInteger.valueOf(init[2]);
-        BigInteger g1 = BigInteger.valueOf(init[1]);
-        BigInteger g0 = BigInteger.valueOf(init[0]);
-        BigInteger zo = BigInteger.ZERO;
-        BigInteger[][] base = new BigInteger[][]{{g3, g2, g1, g0},
-                                                 {g2, g1, g0, zo},
-                                                 {g1, g0, zo, zo},
-                                                 {g0, zo, zo, zo}};
-
-        BigInteger c3 = BigInteger.valueOf(coef[0]);
-        BigInteger c2 = BigInteger.valueOf(coef[1]);
-        BigInteger c1 = BigInteger.valueOf(coef[2]);
-        BigInteger c0 = BigInteger.valueOf(coef[3]);
-        BigInteger on = BigInteger.ONE;
-        BigInteger[][] ones = new BigInteger[][]{{c3, on, zo, zo},
-                                                 {c2, zo, on, zo},
-                                                 {c1, zo, zo, on},
-                                                 {c0, zo, zo, zo}};
-
-        Map<Integer, BigInteger[][]> map = new HashMap<>();
-        List<Integer> line = getLine(n - 3);
-        int cap = line.get(line.size() - 1);
-        int ind = 1;
-        map.put(1, ones);
-        while (true) {
-            ind *= 2;
-            if (ind > cap) {
-                break;
-            }
-            ones = mult(ones, ones);
-            if (line.contains(ind)) {
-                map.put(ind, ones);
-            }
-        }
-        for (int i = 0; i < line.size(); i++) {
-            base = mult(base, map.get(line.get(i)));
-        }
-        return base[0][0];
-    }
-  
-    public static BigInteger get3(byte[] init, byte[] coef, int n) {
-        if (n < init.length) {
-            return BigInteger.valueOf(init[n]);
-        }
-        
-        BigInteger g2 = BigInteger.valueOf(init[2]);
-        BigInteger g1 = BigInteger.valueOf(init[1]);
-        BigInteger g0 = BigInteger.valueOf(init[0]);
-        BigInteger zo = BigInteger.ZERO;
-        BigInteger[][] base = new BigInteger[][]{{g2, g1, g0},
-                                                 {g1, g0, zo}, 
-                                                 {g0, zo, zo}};
-
-        BigInteger c2 = BigInteger.valueOf(coef[0]);
-        BigInteger c1 = BigInteger.valueOf(coef[1]);
-        BigInteger c0 = BigInteger.valueOf(coef[2]);
-        BigInteger on = BigInteger.ONE;
-        BigInteger[][] ones = new BigInteger[][]{{c2, on, zo},
-                                                 {c1, zo, on}, 
-                                                 {c0, zo, zo}};
-
-        Map<Integer, BigInteger[][]> map = new HashMap<>();
-        List<Integer> line = getLine(n - 2);
-        int cap = line.get(line.size() - 1);
-        int ind = 1;
-        map.put(1, ones);
-        while (true) {
-            ind *= 2;
-            if (ind > cap) {
-                break;
-            }
-            ones = mult(ones, ones);
-            if (line.contains(ind)) {
-                map.put(ind, ones);
-            }
-        }
-        for (int i = 0; i < line.size(); i++) {
-            base = mult(base, map.get(line.get(i)));
-        }
-        return base[0][0];
-    }
-
-    public static BigInteger get2(byte[] init, byte[] coef, int n) {
-        if (n < init.length) {
-            return BigInteger.valueOf(init[n]);
-        }
-
-        BigInteger g1 = BigInteger.valueOf(init[1]);
-        BigInteger g0 = BigInteger.valueOf(init[0]);
-        BigInteger zo = BigInteger.ZERO;
-        BigInteger[][] base = new BigInteger[][]{{g1, g0},
-                                                 {g0, zo}};
-
-        BigInteger c1 = BigInteger.valueOf(coef[0]);
-        BigInteger c0 = BigInteger.valueOf(coef[1]);
-        BigInteger on = BigInteger.ONE;
-        BigInteger[][] ones = new BigInteger[][]{{c1, on},
-                                                 {c0, zo}};
-
-        Map<Integer, BigInteger[][]> map = new HashMap<>();
-        List<Integer> line = getLine(n - 1);
-        int cap = line.get(line.size() - 1);
-        int ind = 1;
-        map.put(1, ones);
-        while (true) {
-            ind *= 2;
-            if (ind > cap) {
-                break;
-            }
-            ones = mult(ones, ones);
-            if (line.contains(ind)) {
-                map.put(ind, ones);
-            }
-        }
-        for (int i = 0; i < line.size(); i++) {
-            base = mult(base, map.get(line.get(i)));
-        }
-        return base[0][0];
-    }
-
-    public static BigInteger[][] mult(BigInteger[][] a, BigInteger[][] b) {
-        BigInteger[][] result = new BigInteger[a.length][a.length];
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < a.length; j++) {
-                BigInteger next = BigInteger.ZERO;
-                for (int k = 0; k < a.length; k++) {
-                    next = next.add(a[i][k].multiply(b[k][j]));
+    private static BigInteger[][] squareMatrix(final BigInteger[][] mat) {
+        final BigInteger[][] ret = new BigInteger[mat.length][mat.length];
+        for (int i = 0; i < mat.length; i++) {
+            for (int k = 0; k < mat.length; k++) {
+                ret[i][k] = BigInteger.ZERO;
+                for (int j = 0; j < mat.length; j++) {
+                    ret[i][k] = mat[i][j].multiply(mat[j][k]).add(ret[i][k]);
                 }
-                result[i][j] = next;
             }
         }
-        return result;
+        return ret;
     }
 
-    public static List<Integer> getLine(int n) {
-        List<Integer> result = new ArrayList<>();
-        while (n > 0) {
-            int i = 1;
-            while (i <= n && n % i == 0) {
-                i *= 2;
+    private static BigInteger[] vectorMul(final BigInteger[][] mat, final BigInteger[] vector) {
+        final BigInteger[] ret = new BigInteger[mat.length];
+        for (int i = 0; i < mat.length; i++) {
+            ret[i] = BigInteger.ZERO;
+            for (int j = 0; j < vector.length; j++) {
+                ret[i] = mat[i][j].multiply(vector[j]).add(ret[i]);
             }
-            i /= 2;
-            result.add(i);
-            n -= i;
         }
-        return result;
+        return ret;
     }
 
-    public static void printMatrix(BigInteger[][] matrix) {
-        for (BigInteger[] line : matrix) {
-            System.out.println(Arrays.toString(line));
+    public static BigInteger Get(final byte[] a, final byte[] b, long power) {
+        BigInteger[][] baseMatrix = new BigInteger[b.length][b.length];
+        for(BigInteger[] row:baseMatrix) Arrays.fill(row, BigInteger.ZERO);
+        for (int i = 0; i < b.length; i++) {
+            baseMatrix[b.length-1][i] = BigInteger.valueOf(b[b.length-1-i]);
         }
-        System.out.println();
+        for(int i=1; i<b.length;i++) {
+            baseMatrix[i-1][i] = BigInteger.ONE;
+        }
+        BigInteger[] baseVector = new BigInteger[a.length];
+        Arrays.setAll(baseVector, i -> BigInteger.valueOf(a[i]));
+        while(power > 0) {
+            if((power & 1) == 1) {
+                baseVector = vectorMul(baseMatrix, baseVector);
+                if(power == 1) break;
+            }
+            baseMatrix = squareMatrix(baseMatrix);
+            power >>= 1;
+        }
+        return baseVector[0];
     }
 }
 ```
